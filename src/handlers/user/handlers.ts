@@ -83,7 +83,7 @@ import { log } from '../../routes'
             res.json({
               username: data.user.username,
               description: data.exercise.description,
-              duration: data.exercise.duration,
+              duration: parseInt(data.exercise.duration),
               _id: data.user._id,
               date: new Date(data.exercise.date).toDateString(),
             })
