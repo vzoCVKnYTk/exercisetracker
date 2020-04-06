@@ -1,105 +1,101 @@
-import { Request, Response, NextFunction } from 'express'
-import { createAndSaveExercise, IExercise } from './model'
-import { createExerciseForUser, findLogByUserId } from '../user/model'
-import { IUser } from '../user/model'
-import _ from 'lodash'
-export const newExerciseHandler = (
-    req: Request, 
-    res: Response
-  ) => {
-    const {
-      userId,
-      description,
-      duration,
-      date,
-    } = req.body
+// import { Request, Response, NextFunction } from 'express'
+// import { createExerciseForUser, findLogByUserId, Exercise } from '../user/model'
+// import _ from 'lodash'
+// export const newExerciseHandler = (
+//     req: Request, 
+//     res: Response
+//   ) => {
+//     const {
+//       userId,
+//       description,
+//       duration,
+//       date,
+//     } = req.body
   
-    createAndSaveExercise(
-      description,
-      duration,
-      date,
-      (error: any, exercise: IExercise) => {
-        if(error) {
-          res.status(500).send('Internal Server error')
-        }
-        createExerciseForUser(
-          userId,
-          exercise,
-          (error: any, user: IUser) => {
-  
-            if(error) {
-              res.status(500).send('Internal Server error')
-            } else {
-              res.json({
-                username: user.username,
-                description,
-                duration,
-                _id: user._id,
-                date,
-              })
-            }
-          }
-        )
-    })  
-  }
+//     const exercise = {
+//       description,
+//       duration,
+//       date
+//     }
 
-  export const getLogHandler = (
-    req: Request, 
-    res: Response,
-    next: NextFunction
-  ) => {
-    const {
-      userId,
-      from,
-      to,
-      limit
-    } = req.query
+//     createExerciseForUser(
+//       userId,
+//       exercise,
+//       (error: any, data: any ) => {
+//         if(error) {
+//           res.status(500).send('Internal Server error')
+//         } else {
 
-    // Validate query
+//           res.json({
+//             username: data.user.username,
+//             description: data.exercise.description,
+//             duration: data.exercise.duration,
+//             _id: data.user._id,
+//             date: data.savedExercise.date,
+//           })
+//         }
+//       }
+//     )
+//   }
 
-    if(!userId) {
-      return next({ status: 404, message: `User with id ${userId} not found` })
-    }
+//   export const getLogHandler = (
+//     req: Request, 
+//     res: Response,
+//     next: NextFunction
+//   ) => {
+//     const {
+//       userId,
+//       from,
+//       to,
+//       limit
+//     } = req.query
 
-    findLogByUserId(userId, (error, data) => {
-      if(error) {
-        next({ status: 500, message: `Server Error` })
-      }
+//     // Validate query
 
-      const exercises = data
+//     if(!userId) {
+//       return next({ status: 404, message: `User with id ${userId} not found` })
+//     }
 
-      console.log(exercises, 'exercises')
+//     findLogByUserId(userId, (error, data: Exercise[]) => {
+//       if(error) {
+//         next({ status: 500, message: `Server Error` })
+//       }
 
-      const hasDates = from && to
+//       const exercises = data
+
+//       console.log(exercises, 'exercises')
+
+//       const hasDates = from && to
     
-      const filteredByDate = exercises.filter((exercise: IExercise) => {
-        const { date } = exercise
-        const startDate = new Date(from)
-        const endDate = new Date(to)
+//       const filteredByDate = exercises.filter((exercise: Exercise) => {
+//         const { date } = exercise
+//         const suppliedDate = new Date(date)
+//         const startDate = new Date(from)
+//         const endDate = new Date(to)
 
-        return date > startDate && date < endDate
-      })
+//         return suppliedDate > startDate && suppliedDate < endDate
+//       })
   
-      const filteredLogs = hasDates ? filteredByDate : data.exercise  
+//       const filteredLogs = hasDates ? filteredByDate : exercises  
   
-      const limitedLogs = filteredLogs.slice(0, limit)
+//       const limitedLogs = filteredLogs.slice(0, limit)
   
-      const pickedLogs = limitedLogs.map((log: IExercise) => {
-        return _.omitBy(log, (_value, key) => {
-          console.log(key)
-          return key === '__v'
-        })
-      })
+//       const pickedLogs = limitedLogs.map((log: Exercise) => {
+//         return _.omitBy(log, (_value, key) => {
+//           console.log(key)
+//           return key === '__v'
+//         })
+//       })
 
-      res.json(pickedLogs)
-    })
+//       res.json(pickedLogs)
+//     })
   
-    // Parse to and from dates
-    // Check to < from
+//     // Parse to and from dates
+//     // Check to < from
   
     
-    // Get logs with a limit if specified
-    // console.log(`${userId} ${from} ${to} ${limit}`)
+//     // Get logs with a limit if specified
+//     // console.log(`${userId} ${from} ${to} ${limit}`)
   
     
-  }
+//   }

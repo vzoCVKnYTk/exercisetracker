@@ -1,6 +1,5 @@
-import { newExerciseHandler, getLogHandler } from '../handlers/exercise/handlers'
-import { newUserHandler, getAllUsersHandler } from '../handlers/user/handlers'
-import { errorHandler, notFoundHandler } from '../handlers/error/handlers'
+import { newUserHandler, getAllUsersHandler, newExerciseHandler, getLogHandler } from './user/handlers'
+import { errorHandler, notFoundHandler } from './error/handlers'
 
 export {
   newExerciseHandler,

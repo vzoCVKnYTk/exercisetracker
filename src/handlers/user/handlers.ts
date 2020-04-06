@@ -1,5 +1,16 @@
-import { Request, Response } from 'express'
-import { createAndSaveUser, getAllUsers, UserCallback } from "./model"
+import { 
+  Request, 
+  Response, 
+  NextFunction 
+} from 'express'
+import { 
+  createAndSaveUser, 
+  getAllUsers, 
+  UserCallback, 
+  createExerciseForUser,
+  findLogsByUserId,
+  Exercise
+} from "./model"
 
 export const newUserHandler = (
     req: Request, 
@@ -41,3 +52,85 @@ export const newUserHandler = (
     })
   }
 
+  import _ from 'lodash'
+import { log } from '../../routes'
+  export const newExerciseHandler = (
+      req: Request, 
+      res: Response
+    ) => {
+      const {
+        userId,
+        description,
+        duration,
+        date,
+      } = req.body
+    
+      const exercise: Exercise = {
+        _id: null,
+        description,
+        duration,
+        date
+      }
+  
+      createExerciseForUser(
+        userId,
+        exercise,
+        (error: any, data: any ) => {
+          if(error) {
+            res.status(500).send('Internal Server error')
+          } else {
+            console.log("data", data)
+            res.json({
+              username: data.user.username,
+              description: data.exercise.description,
+              duration: data.exercise.duration,
+              _id: data.user._id,
+              date: new Date(data.exercise.date).toDateString(),
+            })
+          }
+        }
+      )
+    }
+  
+    export const getLogHandler = (
+      req: Request, 
+      res: Response,
+      next: NextFunction
+    ) => {
+      const {
+        userId,
+        from,
+        to,
+        limit
+      } = req.query
+  
+      // Validate query
+  
+      if(!userId) {
+        return next({ status: 404, message: `User with id ${userId} not found` })
+      }
+
+      const options = {
+        from, 
+        to,
+        limit
+      }
+  
+      findLogsByUserId(userId, options, (error, data) => {
+        if(error) {
+          next({ status: 500, message: `Server Error` })
+        }
+  
+  
+        res.json(data)        
+      })
+    
+      // Parse to and from dates
+      // Check to < from
+    
+      
+      // Get logs with a limit if specified
+      // console.log(`${userId} ${from} ${to} ${limit}`)
+    
+      
+    }
