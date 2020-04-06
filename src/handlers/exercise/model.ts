@@ -1,4 +1,4 @@
-import { Schema, model, Callback, Document } from './database' 
+import { Schema, model, Callback, Document } from '../../database' 
 
  export interface IExercise extends Document {
     description: string,
